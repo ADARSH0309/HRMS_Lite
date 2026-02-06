@@ -1,0 +1,226 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom animations and utilities for HRMS */
+
+@layer base {
+  :root {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 20% 98%;
+    --primary-glow: 262 100% 75%;
+
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 11% 65%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 20% 98%;
+
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 262 83% 58%;
+
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --info: 199 89% 48%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(262 83% 58%), hsl(199 89% 48%));
+    --gradient-card: linear-gradient(135deg, hsl(215 28% 17% / 0.8), hsl(224 71% 4% / 0.9));
+    
+    /* Shadows */
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.3);
+    --shadow-card: 0 25px 50px -12px hsl(224 71% 4% / 0.25);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.2);
+
+    --sidebar-background: 224 71% 4%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 262 83% 58%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 262 83% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 2s ease-in-out infinite alternate;
+  }
+
+  .backdrop-blur-glass {
+    backdrop-filter: blur(20px) saturate(180%);
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  .glass-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid hsl(var(--border) / 0.3);
+    box-shadow: var(--shadow-card);
+  }
+
+  .gradient-border {
+    background: var(--gradient-primary);
+    padding: 2px;
+    border-radius: var(--radius);
+  }
+
+  .gradient-border > * {
+    background: hsl(var(--background));
+    border-radius: calc(var(--radius) - 2px);
+  }
+
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .elegant-shadow {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .gradient-text {
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-elegant);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.1);
+  }
+  100% {
+    box-shadow: 0 0 40px hsl(var(--primary) / 0.4);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Recharts customization */
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+.recharts-default-tooltip {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+}
