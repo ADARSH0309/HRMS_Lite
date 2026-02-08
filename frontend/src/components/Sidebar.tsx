@@ -1,5 +1,11 @@
-import { Layout, Users, Clock } from "lucide-react";
+import { LayoutDashboard, Users, Clock } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -13,7 +19,7 @@ const Sidebar = ({ isOpen, onToggle, currentPage, onPageChange }: SidebarProps) 
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", icon: Layout, href: "/" },
+    { name: "Dashboard", icon: LayoutDashboard, href: "/" },
     { name: "Employees", icon: Users, href: "/employees" },
     { name: "Attendance", icon: Clock, href: "/attendance" },
   ];
@@ -24,47 +30,70 @@ const Sidebar = ({ isOpen, onToggle, currentPage, onPageChange }: SidebarProps) 
   }
 
   return (
-    <div className={`fixed left-0 top-0 h-full glass-card border-r border-border transition-all duration-500 z-50 ${
-      isOpen ? 'w-64' : 'w-16'
-    } backdrop-blur-xl`}>
-      <div className="p-4">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center shadow-lg animate-pulse-glow">
-            <span className="text-white font-bold text-sm">HR</span>
-          </div>
-          {isOpen && (
-            <div className="animate-slide-in">
-              <h1 className="text-xl font-bold gradient-text">HRMS Lite</h1>
-              <p className="text-xs text-muted-foreground">Employee Management</p>
+    <TooltipProvider delayDuration={0}>
+      <div className={`fixed left-0 top-0 h-full bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-r border-sidebar-border transition-all duration-300 z-50 flex flex-col ${isOpen ? 'w-[250px]' : 'w-20'
+        }`}>
+        <div className="h-16 flex items-center px-4 border-b border-sidebar-border/50">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/20">
+              <span className="text-white font-bold text-sm">HR</span>
             </div>
-          )}
+            {isOpen && (
+              <div className="overflow-hidden whitespace-nowrap">
+                <h1 className="text-sm font-semibold tracking-tight">HRMS Lite</h1>
+              </div>
+            )}
+          </div>
         </div>
 
-        <nav className="space-y-2">
-          {menuItems.map((item) => (
-            <div key={item.name}>
+        <nav className="flex-1 p-3 space-y-1">
+          {menuItems.map((item) => {
+            const active = isMenuActive(item);
+            const button = (
               <button
                 onClick={() => {
                   onPageChange(item.name);
                   navigate(item.href);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 hover:scale-105 group relative overflow-hidden ${
-                  isMenuActive(item)
-                    ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/10'
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium relative group ${active
+                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25'
+                  : 'text-sidebar-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50 hover:translate-x-1'
+                  }`}
                 type="button"
               >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <item.icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${active ? 'text-white' : ''}`} />
                 {isOpen && (
-                  <span className="flex-1 text-left">{item.name}</span>
+                  <span className="flex-1 text-left truncate">{item.name}</span>
                 )}
               </button>
-            </div>
-          ))}
+            );
+
+            return (
+              <div key={item.name}>
+                {!isOpen ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>{button}</TooltipTrigger>
+                    <TooltipContent side="right" className="bg-sidebar text-white border-sidebar-border">
+                      {item.name}
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  button
+                )}
+              </div>
+            );
+          })}
         </nav>
+
+        {isOpen && (
+          <div className="p-4 border-t border-sidebar-border/50">
+            <div className="text-xs text-sidebar-foreground/40 text-center">
+              v1.0.0
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </TooltipProvider>
   );
 };
 

@@ -19,4 +19,6 @@ export interface DashboardSummary {
   present_today: number;
   absent_today: number;
   total_departments: number;
+  recent_attendance: { date: string; present: number; absent: number }[];
+  department_distribution: { name: string; value: number }[];
 }

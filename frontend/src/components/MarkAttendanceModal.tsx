@@ -79,7 +79,7 @@ export default function MarkAttendanceModal({
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetForm(); }}>
-      <DialogContent className="bg-slate-900 border-slate-700 w-full max-w-md p-0">
+      <DialogContent className="w-full max-w-md p-0">
         <div className="p-6">
           <DialogHeader>
             <DialogTitle>Mark Attendance</DialogTitle>
@@ -89,19 +89,19 @@ export default function MarkAttendanceModal({
           </DialogHeader>
           <div className="space-y-4 mt-4">
             {error && (
-              <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-400 text-sm">
+              <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500 dark:text-red-400 text-sm animate-fade-in">
                 {error}
               </div>
             )}
             <div>
-              <Label className="text-slate-300 mb-1 block">Employee</Label>
+              <Label className="mb-1 block">Employee</Label>
               <Select value={selectedEmployeeId} onValueChange={setSelectedEmployeeId}>
-                <SelectTrigger className="bg-slate-800 text-white border-slate-700">
+                <SelectTrigger>
                   <SelectValue placeholder="Select an employee" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
+                <SelectContent>
                   {employees.map((emp) => (
-                    <SelectItem key={emp.employee_id} value={emp.employee_id} className="text-white">
+                    <SelectItem key={emp.employee_id} value={emp.employee_id}>
                       {emp.full_name} ({emp.employee_id})
                     </SelectItem>
                   ))}
@@ -109,23 +109,22 @@ export default function MarkAttendanceModal({
               </Select>
             </div>
             <div>
-              <Label className="text-slate-300 mb-1 block">Date</Label>
+              <Label className="mb-1 block">Date</Label>
               <Input
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="bg-slate-800 text-white border-slate-700"
               />
             </div>
             <div>
-              <Label className="text-slate-300 mb-1 block">Status</Label>
+              <Label className="mb-1 block">Status</Label>
               <Select value={status} onValueChange={(v) => setStatus(v as "Present" | "Absent")}>
-                <SelectTrigger className="bg-slate-800 text-white border-slate-700">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="Present" className="text-white">Present</SelectItem>
-                  <SelectItem value="Absent" className="text-white">Absent</SelectItem>
+                <SelectContent>
+                  <SelectItem value="Present">Present</SelectItem>
+                  <SelectItem value="Absent">Absent</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -137,12 +136,17 @@ export default function MarkAttendanceModal({
               </Button>
             </DialogClose>
             <Button
-              className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full mt-2"
               onClick={handleSave}
               type="button"
               disabled={saving}
             >
-              {saving ? "Saving..." : "Mark Attendance"}
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  Saving...
+                </span>
+              ) : "Mark Attendance"}
             </Button>
           </DialogFooter>
         </div>

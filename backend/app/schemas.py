@@ -20,10 +20,19 @@ class EmployeeOut(BaseModel):
     email: str
     department: str
 
-    model_config = {"from_attributes": True}
+
+class EmployeeUpdate(BaseModel):
+    employee_id: str | None = None
+    full_name: str | None = None
+    email: EmailStr | None = None
+    department: str | None = None
 
 
 # ── Attendance ──
+
+
+class AttendanceUpdate(BaseModel):
+    status: str = Field(..., pattern="^(Present|Absent)$")
 
 
 class AttendanceCreate(BaseModel):
@@ -39,8 +48,6 @@ class AttendanceOut(BaseModel):
     status: str
     employee: EmployeeOut | None = None
 
-    model_config = {"from_attributes": True}
-
 
 # ── Dashboard ──
 
@@ -50,3 +57,5 @@ class DashboardSummary(BaseModel):
     present_today: int
     absent_today: int
     total_departments: int
+    recent_attendance: list[dict]
+    department_distribution: list[dict]

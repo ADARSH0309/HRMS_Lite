@@ -1,35 +1,26 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship
+"""
+MongoDB document schemas (for reference only — no ORM models needed).
 
-from .database import Base
+employees collection:
+{
+    "id": 1,                    # auto-increment integer
+    "employee_id": "EMP001",    # unique string
+    "full_name": "John Doe",
+    "email": "john@example.com", # unique
+    "department": "Engineering"
+}
 
+attendance collection:
+{
+    "id": 1,                    # auto-increment integer
+    "employee_id": 3,           # references employees.id (integer)
+    "date": "2024-01-15",       # ISO date string
+    "status": "Present"         # "Present" or "Absent"
+}
 
-class Employee(Base):
-    __tablename__ = "employees"
-
-    id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(String, unique=True, nullable=False, index=True)
-    full_name = Column(String, nullable=False)
-    email = Column(String, unique=True, nullable=False, index=True)
-    department = Column(String, nullable=False)
-
-    attendance_records = relationship(
-        "Attendance", back_populates="employee", cascade="all, delete-orphan"
-    )
-
-
-class Attendance(Base):
-    __tablename__ = "attendance"
-
-    id = Column(Integer, primary_key=True, index=True)
-    employee_id = Column(
-        Integer, ForeignKey("employees.id", ondelete="CASCADE"), nullable=False
-    )
-    date = Column(Date, nullable=False)
-    status = Column(String, nullable=False)  # "Present" or "Absent"
-
-    employee = relationship("Employee", back_populates="attendance_records")
-
-    __table_args__ = (
-        UniqueConstraint("employee_id", "date", name="uq_employee_date"),
-    )
+counters collection (for auto-increment IDs):
+{
+    "_id": "employees",         # collection name
+    "seq": 42                   # current sequence value
+}
+"""

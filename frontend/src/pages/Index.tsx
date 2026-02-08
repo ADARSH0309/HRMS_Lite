@@ -21,7 +21,7 @@ const Index = () => {
   const currentPage = getCurrentPageName(location.pathname);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="flex">
         <Sidebar
           isOpen={sidebarOpen}
@@ -36,7 +36,7 @@ const Index = () => {
             navigate(routeMap[pageName] || "/");
           }}
         />
-        <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
+        <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-[280px]' : 'ml-20'}`}>
           <Header
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             currentPage={currentPage}
@@ -47,7 +47,7 @@ const Index = () => {
               <Route path="/employees" element={<Employees />} />
               <Route path="/attendance" element={<Attendance />} />
               <Route path="*" element={
-                <div className="text-center pt-20 text-slate-400 text-2xl">
+                <div className="text-center pt-20 text-muted-foreground text-2xl">
                   404 - Page Not Found
                 </div>
               } />

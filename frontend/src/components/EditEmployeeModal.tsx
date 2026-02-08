@@ -9,25 +9,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
+import type { Employee } from "@/types";
 
-type AddEmployeeModalProps = {
+type EditEmployeeModalProps = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
-  onAddEmployee?: (employee: {
-    employee_id: string;
-    full_name: string;
-    email: string;
-    department: string;
-  }) => void | Promise<void>;
+  employee: Employee | null;
+  onSave: (id: number, data: Partial<Omit<Employee, "id">>) => Promise<void>;
 };
 
-export default function AddEmployeeModal({
+export default function EditEmployeeModal({
   open,
   onOpenChange,
-  onAddEmployee,
-}: AddEmployeeModalProps) {
+  employee,
+  onSave,
+}: EditEmployeeModalProps) {
   const [employeeId, setEmployeeId] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,47 +33,47 @@ export default function AddEmployeeModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const resetForm = () => {
-    setEmployeeId("");
-    setFullName("");
-    setEmail("");
-    setDepartment("");
-    setError(null);
-  };
+  useEffect(() => {
+    if (employee) {
+      setEmployeeId(employee.employee_id);
+      setFullName(employee.full_name);
+      setEmail(employee.email);
+      setDepartment(employee.department);
+      setError(null);
+    }
+  }, [employee]);
 
   const handleSave = async () => {
     if (!employeeId.trim() || !fullName.trim() || !email.trim() || !department.trim()) {
       setError("All fields are required.");
       return;
     }
+    if (!employee) return;
     setSaving(true);
     setError(null);
     try {
-      if (onAddEmployee) {
-        await onAddEmployee({
-          employee_id: employeeId.trim(),
-          full_name: fullName.trim(),
-          email: email.trim(),
-          department: department.trim(),
-        });
-      }
+      await onSave(employee.id, {
+        employee_id: employeeId.trim(),
+        full_name: fullName.trim(),
+        email: email.trim(),
+        department: department.trim(),
+      });
       onOpenChange(false);
-      resetForm();
     } catch (err: any) {
-      setError(err.message || "Failed to add employee.");
+      setError(err.message || "Failed to update employee.");
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetForm(); }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-md p-0 max-h-screen overflow-y-auto">
         <div className="p-6">
           <DialogHeader>
-            <DialogTitle>Add New Employee</DialogTitle>
+            <DialogTitle>Edit Employee</DialogTitle>
             <DialogDescription>
-              Enter employee information below.
+              Update employee information below.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 mt-2">
@@ -85,11 +83,11 @@ export default function AddEmployeeModal({
               </div>
             )}
             <div>
-              <Label htmlFor="employeeId" className="mb-1 block">
+              <Label htmlFor="editEmployeeId" className="mb-1 block">
                 Employee ID
               </Label>
               <Input
-                id="employeeId"
+                id="editEmployeeId"
                 placeholder="e.g. EMP001"
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
@@ -97,22 +95,22 @@ export default function AddEmployeeModal({
               />
             </div>
             <div>
-              <Label htmlFor="fullName" className="mb-1 block">
+              <Label htmlFor="editFullName" className="mb-1 block">
                 Full Name
               </Label>
               <Input
-                id="fullName"
+                id="editFullName"
                 placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
             <div>
-              <Label htmlFor="email" className="mb-1 block">
+              <Label htmlFor="editEmail" className="mb-1 block">
                 Email
               </Label>
               <Input
-                id="email"
+                id="editEmail"
                 type="email"
                 placeholder="email@example.com"
                 value={email}
@@ -120,11 +118,11 @@ export default function AddEmployeeModal({
               />
             </div>
             <div>
-              <Label htmlFor="department" className="mb-1 block">
+              <Label htmlFor="editDepartment" className="mb-1 block">
                 Department
               </Label>
               <Input
-                id="department"
+                id="editDepartment"
                 placeholder="e.g. Engineering"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
@@ -148,7 +146,7 @@ export default function AddEmployeeModal({
                   <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                   Saving...
                 </span>
-              ) : "Save Employee"}
+              ) : "Save Changes"}
             </Button>
           </DialogFooter>
         </div>

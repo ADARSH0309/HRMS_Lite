@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Calendar, Clock, Users } from "lucide-react";
+import { Calendar, Clock, Users, MoreHorizontal, ArrowLeftRight, Trash2, CheckCircle2, XCircle, ListChecks, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,8 +10,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
 import MarkAttendanceModal from "./MarkAttendanceModal";
-import { getAttendance, getEmployees } from "@/lib/api";
+import StatusBadge from "./StatusBadge";
+import AnimatedCounter from "./AnimatedCounter";
+import { getAttendance, getEmployees, updateAttendance, deleteAttendance } from "@/lib/api";
 import type { AttendanceRecord, Employee } from "@/types";
 
 const Attendance = () => {
@@ -22,6 +40,36 @@ const Attendance = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showMarkModal, setShowMarkModal] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const handleToggleStatus = async (record: AttendanceRecord) => {
+    setActionError(null);
+    try {
+      const newStatus = record.status === "Present" ? "Absent" : "Present";
+      await updateAttendance(record.id, newStatus);
+      await fetchRecords();
+    } catch (err: any) {
+      setActionError(err.message || "Failed to update attendance");
+    }
+  };
+
+  const handleDeleteAttendance = async () => {
+    if (recordToDelete !== null) {
+      setActionError(null);
+      try {
+        await deleteAttendance(recordToDelete);
+        setRecordToDelete(null);
+        setDeleteDialogOpen(false);
+        await fetchRecords();
+      } catch (err: any) {
+        setDeleteDialogOpen(false);
+        setRecordToDelete(null);
+        setActionError(err.message || "Failed to delete attendance");
+      }
+    }
+  };
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -42,7 +90,7 @@ const Attendance = () => {
   useEffect(() => {
     getEmployees()
       .then(setEmployees)
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -53,9 +101,9 @@ const Attendance = () => {
   const absentCount = records.filter((r) => r.status === "Absent").length;
 
   const stats = [
-    { title: "Total Present", value: presentCount.toString(), color: "text-green-400" },
-    { title: "Total Absent", value: absentCount.toString(), color: "text-red-400" },
-    { title: "Total Records", value: records.length.toString(), color: "text-blue-400" },
+    { title: "Total Present", value: presentCount, color: "text-green-600 dark:text-green-400", icon: CheckCircle2, iconBg: "bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400" },
+    { title: "Total Absent", value: absentCount, color: "text-red-600 dark:text-red-400", icon: XCircle, iconBg: "bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400" },
+    { title: "Total Records", value: records.length, color: "text-blue-600 dark:text-blue-400", icon: ListChecks, iconBg: "bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400" },
   ];
 
   const getInitials = (name: string) =>
@@ -69,11 +117,11 @@ const Attendance = () => {
   if (error) {
     return (
       <div className="space-y-6 animate-fade-in">
-        <h1 className="text-3xl font-bold text-white mb-2">Attendance</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">Attendance</h1>
         <Card className="border-red-500/50 bg-red-500/10">
           <CardContent className="p-6 text-center">
-            <p className="text-red-400 mb-4">{error}</p>
-            <Button onClick={fetchRecords} variant="outline" className="border-red-500 text-red-400 hover:bg-red-500/20">
+            <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>
+            <Button onClick={fetchRecords} variant="outline" className="border-red-500 text-red-500 hover:bg-red-500/10">
               Try Again
             </Button>
           </CardContent>
@@ -83,20 +131,42 @@ const Attendance = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in p-1">
       <MarkAttendanceModal
         open={showMarkModal}
         onOpenChange={setShowMarkModal}
         onSuccess={fetchRecords}
       />
 
-      <div className="flex items-center justify-between">
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Attendance Record?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this attendance record? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setRecordToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAttendance}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Attendance</h1>
-          <p className="text-slate-400">Track employee attendance</p>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/60 w-fit mb-2">
+            Attendance
+          </h1>
+          <p className="text-muted-foreground text-lg">Track and manage employee attendance records</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowMarkModal(true)}>
-          <Clock className="w-4 h-4 mr-2" />
+        <Button onClick={() => setShowMarkModal(true)} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 group">
+          <ClipboardCheck className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
           Mark Attendance
         </Button>
       </div>
@@ -104,41 +174,71 @@ const Attendance = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="bg-slate-800/50 backdrop-blur-xl border-slate-700">
-            <CardContent className="p-6 text-center">
-              <p className="text-slate-400 text-sm font-medium">{stat.title}</p>
-              <p className={`text-2xl font-bold mt-2 ${stat.color}`}>{stat.value}</p>
+          <Card key={index} className="shadow-sm bg-card hover-lift animate-fade-in-up opacity-0" style={{ animationDelay: `${index * 100}ms` }}>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-xl ${stat.iconBg} transition-transform duration-300 hover:scale-110`}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">{stat.title}</p>
+                  <p className={`text-3xl font-bold mt-1 ${stat.color} tracking-tight`}>
+                    <AnimatedCounter value={stat.value} duration={800} />
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
+      {/* Action Error Banner */}
+      {actionError && (
+        <Card className="border-red-500/50 bg-red-500/10">
+          <CardContent className="p-4 flex items-center justify-between">
+            <p className="text-red-500 dark:text-red-400 text-sm">{actionError}</p>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:text-red-600"
+              onClick={() => setActionError(null)}
+            >
+              Dismiss
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filters */}
-      <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700">
+      <Card className="border shadow-sm bg-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-4 flex-wrap">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-background p-1 pr-3 rounded-md border border-input focus-within:ring-1 ring-ring transition-all">
+              <div className="p-2 bg-muted rounded-md text-muted-foreground">
+                <Calendar className="w-4 h-4" />
+              </div>
               <Input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-slate-700/50 border-slate-600 text-white w-44"
+                className="w-40 border-0 bg-transparent focus-visible:ring-0 p-0 h-auto"
               />
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-slate-400" />
+            <div className="flex items-center gap-2 bg-background p-1 pr-1 rounded-md border border-input focus-within:ring-1 ring-ring transition-all">
+              <div className="p-2 bg-muted rounded-md text-muted-foreground">
+                <Users className="w-4 h-4" />
+              </div>
               <Select
                 value={selectedEmployeeId}
                 onValueChange={(v) => setSelectedEmployeeId(v === "all" ? "" : v)}
               >
-                <SelectTrigger className="bg-slate-700/50 border-slate-600 text-white w-56">
+                <SelectTrigger className="w-56 border-0 bg-transparent focus:ring-0 shadow-none">
                   <SelectValue placeholder="All Employees" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700">
-                  <SelectItem value="all" className="text-white">All Employees</SelectItem>
+                <SelectContent>
+                  <SelectItem value="all">All Employees</SelectItem>
                   {employees.map((emp) => (
-                    <SelectItem key={emp.employee_id} value={emp.employee_id} className="text-white">
+                    <SelectItem key={emp.employee_id} value={emp.employee_id}>
                       {emp.full_name} ({emp.employee_id})
                     </SelectItem>
                   ))}
@@ -147,10 +247,10 @@ const Attendance = () => {
             </div>
             {selectedDate && (
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                className="border-slate-600 text-slate-400"
                 onClick={() => setSelectedDate("")}
+                className="text-muted-foreground hover:text-foreground"
               >
                 Clear Date
               </Button>
@@ -161,15 +261,15 @@ const Attendance = () => {
 
       {/* Attendance Table */}
       {loading ? (
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700">
+        <Card className="border-0 shadow-sm bg-card">
           <CardContent className="p-0">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="p-4 border-b border-slate-700/50 animate-pulse">
+              <div key={i} className="p-4 border-b border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-700" />
+                  <div className="w-10 h-10 rounded-full shimmer-bg" />
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-slate-700 rounded w-40" />
-                    <div className="h-3 bg-slate-700 rounded w-24" />
+                    <div className="h-4 rounded w-40 shimmer-bg" />
+                    <div className="h-3 rounded w-24 shimmer-bg" />
                   </div>
                 </div>
               </div>
@@ -177,72 +277,97 @@ const Attendance = () => {
           </CardContent>
         </Card>
       ) : records.length === 0 ? (
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700">
+        <Card className="border border-dashed shadow-none bg-muted/10">
           <CardContent className="p-12 text-center">
-            <Clock className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-white text-lg font-semibold mb-2">No attendance records</h3>
-            <p className="text-slate-400 mb-4">
+            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+              <Clock className="w-10 h-10 text-muted-foreground/50" />
+            </div>
+            <h3 className="text-foreground text-xl font-bold mb-2">No attendance records</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
               No records found for the selected filters. Mark attendance to get started.
             </p>
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setShowMarkModal(true)}>
-              <Clock className="w-4 h-4 mr-2" />
+            <Button onClick={() => setShowMarkModal(true)} size="lg" className="shadow-lg">
+              <Clock className="w-5 h-5 mr-2" />
               Mark Attendance
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-slate-800/50 backdrop-blur-xl border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-white">
-              Attendance Records {selectedDate && `- ${selectedDate}`}
+        <Card className="border shadow-sm bg-card overflow-hidden">
+          <CardHeader className="border-b border-border bg-muted/50 py-4">
+            <CardTitle className="text-foreground text-base font-semibold flex items-center gap-2">
+              Attendance Records
+              {selectedDate && <span className="text-muted-foreground font-normal text-xs bg-muted border px-2 py-0.5 rounded-full">{selectedDate}</span>}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-hidden">
+            <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b border-slate-700">
+                <thead className="bg-muted/50 border-b border-border">
                   <tr className="text-left">
-                    <th className="p-4 text-slate-400 font-medium">EMPLOYEE</th>
-                    <th className="p-4 text-slate-400 font-medium">DATE</th>
-                    <th className="p-4 text-slate-400 font-medium">STATUS</th>
+                    <th className="h-10 px-6 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80">EMPLOYEE</th>
+                    <th className="h-10 px-6 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80">DATE</th>
+                    <th className="h-10 px-6 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80">STATUS</th>
+                    <th className="h-10 px-6 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80 text-right">ACTIONS</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {records.map((record) => (
+                <tbody className="">
+                  {records.map((record, index) => (
                     <tr
                       key={record.id}
-                      className="border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors"
+                      className="h-16 border-b border-border/40 table-row-hover group animate-fade-in opacity-0"
+                      style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                            <span className="text-white text-sm font-semibold">
+                      <td className="px-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105">
+                            <span className="text-primary text-xs font-bold tracking-wider">
                               {record.employee
                                 ? getInitials(record.employee.full_name)
                                 : "?"}
                             </span>
                           </div>
                           <div>
-                            <div className="text-white font-medium">
+                            <div className="text-foreground font-semibold tracking-tight text-sm">
                               {record.employee?.full_name || "Unknown"}
                             </div>
-                            <div className="text-slate-400 text-sm">
+                            <div className="text-muted-foreground text-xs">
                               {record.employee?.employee_id || ""}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-slate-300">{record.date}</td>
-                      <td className="p-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            record.status === "Present"
-                              ? "bg-green-400/20 text-green-400"
-                              : "bg-red-400/20 text-red-400"
-                          }`}
-                        >
-                          {record.status}
-                        </span>
+                      <td className="px-6 text-sm text-foreground/80 font-medium font-mono">{record.date}</td>
+                      <td className="px-6">
+                        <StatusBadge status={record.status as "Present" | "Absent"} />
+                      </td>
+                      <td className="px-6 text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48">
+                            <DropdownMenuItem
+                              onClick={() => handleToggleStatus(record)}
+                              className="cursor-pointer"
+                            >
+                              <ArrowLeftRight className="w-4 h-4 mr-2" />
+                              Switch to {record.status === "Present" ? "Absent" : "Present"}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive cursor-pointer"
+                              onClick={() => {
+                                setRecordToDelete(record.id);
+                                setDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete Record
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))}

@@ -1,6 +1,6 @@
 import type { Employee, AttendanceRecord, DashboardSummary } from "@/types";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
@@ -39,6 +39,16 @@ export async function createEmployee(data: {
   });
 }
 
+export async function updateEmployee(
+  id: number,
+  data: Partial<Omit<Employee, "id">>
+): Promise<Employee> {
+  return request<Employee>(`/api/employees/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
 export async function deleteEmployee(id: number): Promise<Employee> {
   return request<Employee>(`/api/employees/${id}`, { method: "DELETE" });
 }
@@ -65,6 +75,20 @@ export async function markAttendance(data: {
     method: "POST",
     body: JSON.stringify(data),
   });
+}
+
+export async function updateAttendance(
+  id: number,
+  status: "Present" | "Absent"
+): Promise<AttendanceRecord> {
+  return request<AttendanceRecord>(`/api/attendance/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ status }),
+  });
+}
+
+export async function deleteAttendance(id: number): Promise<void> {
+  await request<unknown>(`/api/attendance/${id}`, { method: "DELETE" });
 }
 
 // ── Dashboard ──
