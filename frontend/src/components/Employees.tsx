@@ -194,7 +194,7 @@ const Employees = () => {
           </h1>
           <p className="text-muted-foreground text-lg">Manage your team members and their roles</p>
         </div>
-        <Button onClick={() => setShowAddModal(true)} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 group">
+        <Button onClick={() => setShowAddModal(true)} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 group btn-shimmer">
           <UserPlus className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
           Add Employee
         </Button>
@@ -259,7 +259,7 @@ const Employees = () => {
       ) : filteredEmployees.length === 0 ? (
         <Card className="border border-dashed shadow-none bg-muted/10">
           <CardContent className="p-12 text-center">
-            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float-glow">
               <Users className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <h3 className="text-foreground text-xl font-bold mb-2">
@@ -296,12 +296,12 @@ const Employees = () => {
                   {filteredEmployees.map((employee, index) => (
                     <tr
                       key={employee.id}
-                      className="h-16 border-b border-border/40 table-row-hover group animate-fade-in opacity-0"
+                      className="h-16 border-b border-border/40 table-row-hover group animate-row-slide-in opacity-0"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <td className="px-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105 avatar-glow-ring">
                             <span className="text-primary text-xs font-bold tracking-wider">
                               {getInitials(employee.full_name)}
                             </span>

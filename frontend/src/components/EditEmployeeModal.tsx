@@ -76,7 +76,7 @@ export default function EditEmployeeModal({
               Update employee information below.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 mt-2">
+          <div className="space-y-4 mt-2 modal-stagger">
             {error && (
               <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500 dark:text-red-400 text-sm animate-fade-in">
                 {error}
@@ -92,6 +92,7 @@ export default function EditEmployeeModal({
                 value={employeeId}
                 onChange={(e) => setEmployeeId(e.target.value)}
                 autoFocus
+                className="input-focus-glow"
               />
             </div>
             <div>
@@ -103,6 +104,7 @@ export default function EditEmployeeModal({
                 placeholder="Full Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                className="input-focus-glow"
               />
             </div>
             <div>
@@ -115,6 +117,7 @@ export default function EditEmployeeModal({
                 placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="input-focus-glow"
               />
             </div>
             <div>
@@ -126,6 +129,7 @@ export default function EditEmployeeModal({
                 placeholder="e.g. Engineering"
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
+                className="input-focus-glow"
               />
             </div>
           </div>
@@ -136,7 +140,7 @@ export default function EditEmployeeModal({
               </Button>
             </DialogClose>
             <Button
-              className="w-full mt-2"
+              className="w-full mt-2 btn-shimmer"
               onClick={handleSave}
               type="button"
               disabled={saving}

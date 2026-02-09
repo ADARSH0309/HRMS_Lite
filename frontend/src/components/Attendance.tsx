@@ -165,7 +165,7 @@ const Attendance = () => {
           </h1>
           <p className="text-muted-foreground text-lg">Track and manage employee attendance records</p>
         </div>
-        <Button onClick={() => setShowMarkModal(true)} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 group">
+        <Button onClick={() => setShowMarkModal(true)} className="shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 group btn-shimmer">
           <ClipboardCheck className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
           Mark Attendance
         </Button>
@@ -174,7 +174,7 @@ const Attendance = () => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="shadow-sm bg-card hover-lift animate-fade-in-up opacity-0" style={{ animationDelay: `${index * 100}ms` }}>
+          <Card key={index} className="shadow-sm bg-card hover-lift animate-fade-in-up opacity-0 card-hover-border card-depth" style={{ animationDelay: `${index * 100}ms` }}>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className={`p-3 rounded-xl ${stat.iconBg} transition-transform duration-300 hover:scale-110`}>
@@ -279,7 +279,7 @@ const Attendance = () => {
       ) : records.length === 0 ? (
         <Card className="border border-dashed shadow-none bg-muted/10">
           <CardContent className="p-12 text-center">
-            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float">
+            <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6 animate-float-glow">
               <Clock className="w-10 h-10 text-muted-foreground/50" />
             </div>
             <h3 className="text-foreground text-xl font-bold mb-2">No attendance records</h3>
@@ -315,12 +315,12 @@ const Attendance = () => {
                   {records.map((record, index) => (
                     <tr
                       key={record.id}
-                      className="h-16 border-b border-border/40 table-row-hover group animate-fade-in opacity-0"
+                      className="h-16 border-b border-border/40 table-row-hover group animate-row-slide-in opacity-0"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
                       <td className="px-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105">
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/10 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105 avatar-glow-ring">
                             <span className="text-primary text-xs font-bold tracking-wider">
                               {record.employee
                                 ? getInitials(record.employee.full_name)

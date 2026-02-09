@@ -104,7 +104,7 @@ const Dashboard = () => {
           : stats.map((stat, index) => (
             <Card
               key={index}
-              className="relative group cursor-pointer hover-lift border bg-card animate-fade-in-up opacity-0 overflow-hidden"
+              className="relative group cursor-pointer hover-lift border bg-card animate-fade-in-up opacity-0 overflow-hidden card-hover-border card-depth"
               style={{ animationDelay: `${index * 100}ms` }}
               onClick={() => navigate(stat.href)}
             >
@@ -137,7 +137,7 @@ const Dashboard = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Attendance Trend */}
-        <Card className="shadow-sm border bg-card/50 backdrop-blur-sm hover-lift animate-fade-in-up opacity-0" style={{ animationDelay: '400ms' }}>
+        <Card className="shadow-sm border bg-card/50 backdrop-blur-sm hover-lift animate-fade-in-up opacity-0 card-hover-border card-depth" style={{ animationDelay: '400ms' }}>
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -178,7 +178,7 @@ const Dashboard = () => {
         </Card>
 
         {/* Department Distribution */}
-        <Card className="shadow-sm border bg-card/50 backdrop-blur-sm hover-lift animate-fade-in-up opacity-0" style={{ animationDelay: '500ms' }}>
+        <Card className="shadow-sm border bg-card/50 backdrop-blur-sm hover-lift animate-fade-in-up opacity-0 card-hover-border card-depth" style={{ animationDelay: '500ms' }}>
           <CardContent className="p-6">
             <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <Building className="w-5 h-5 text-indigo-500" />

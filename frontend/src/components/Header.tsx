@@ -21,7 +21,7 @@ const Header = ({ onToggleSidebar, currentPage }: HeaderProps) => {
         </Button>
 
         <nav className="flex items-center gap-2 text-sm text-muted-foreground" aria-label="Breadcrumb">
-          <span className="hover:text-foreground transition-colors cursor-pointer font-medium">Home</span>
+          <span className="hover:text-foreground transition-colors cursor-pointer font-medium breadcrumb-link">Home</span>
           <ChevronRight className="w-4 h-4 text-border" />
           <span className="text-foreground font-semibold tracking-tight">{currentPage}</span>
         </nav>
@@ -36,7 +36,7 @@ const Header = ({ onToggleSidebar, currentPage }: HeaderProps) => {
             <p className="text-xs text-muted-foreground mt-1">Administrator</p>
           </div>
           <div
-            className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center cursor-pointer hover:bg-primary/20 transition-colors border border-primary/20"
+            className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center cursor-pointer hover:bg-primary/20 transition-all duration-300 border border-primary/20 avatar-glow-ring"
             title="Profile"
             tabIndex={0}
             role="button"

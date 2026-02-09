@@ -55,15 +55,15 @@ const Sidebar = ({ isOpen, onToggle, currentPage, onPageChange }: SidebarProps) 
                   onPageChange(item.name);
                   navigate(item.href);
                 }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium relative group ${active
-                  ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25'
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium relative group sidebar-indicator ${active
+                  ? 'active bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25 sidebar-active-glow'
                   : 'text-sidebar-foreground/60 hover:text-foreground hover:bg-sidebar-accent/50 hover:translate-x-1'
                   }`}
                 type="button"
               >
                 <item.icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110 ${active ? 'text-white' : ''}`} />
                 {isOpen && (
-                  <span className="flex-1 text-left truncate">{item.name}</span>
+                  <span className="flex-1 text-left truncate animate-slide-in-left">{item.name}</span>
                 )}
               </button>
             );

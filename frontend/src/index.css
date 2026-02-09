@@ -178,6 +178,129 @@
   @apply border-l-2 border-l-primary;
 }
 
+/* Sidebar active glow */
+.sidebar-active-glow {
+  box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.15), 0 0 12px rgba(99, 102, 241, 0.1);
+}
+
+/* Sidebar indicator bar */
+.sidebar-indicator {
+  position: relative;
+}
+.sidebar-indicator::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 15%;
+  height: 70%;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sidebar-indicator.active::before {
+  opacity: 1;
+}
+
+/* Breadcrumb underline slide-in */
+.breadcrumb-link {
+  position: relative;
+}
+.breadcrumb-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1.5px;
+  width: 0;
+  background: hsl(var(--primary));
+  transition: width 0.3s ease;
+}
+.breadcrumb-link:hover::after {
+  width: 100%;
+}
+
+/* Avatar glow ring on hover */
+.avatar-glow-ring {
+  @apply transition-all duration-300;
+}
+.avatar-glow-ring:hover {
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2), 0 0 12px hsl(var(--primary) / 0.15);
+}
+
+/* Button shimmer sweep */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s ease;
+}
+.btn-shimmer:hover::after {
+  left: 100%;
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+/* Input focus glow */
+.input-focus-glow:focus-within,
+.input-focus-glow:focus-visible {
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1), 0 0 8px hsl(var(--primary) / 0.08);
+}
+
+/* Card hover border shimmer */
+.card-hover-border {
+  position: relative;
+}
+.card-hover-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(252 87% 67% / 0.5), hsl(var(--primary) / 0.5));
+  background-size: 200% 200%;
+  animation: border-shimmer 3s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.card-hover-border:hover::before {
+  opacity: 1;
+}
+
+/* Card depth inner shadow */
+.card-depth {
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* Modal stagger children */
+.modal-stagger > *:nth-child(1) { animation: fade-in 0.3s ease-out 0ms both; }
+.modal-stagger > *:nth-child(2) { animation: fade-in 0.3s ease-out 60ms both; }
+.modal-stagger > *:nth-child(3) { animation: fade-in 0.3s ease-out 120ms both; }
+.modal-stagger > *:nth-child(4) { animation: fade-in 0.3s ease-out 180ms both; }
+.modal-stagger > *:nth-child(5) { animation: fade-in 0.3s ease-out 240ms both; }
+.modal-stagger > *:nth-child(6) { animation: fade-in 0.3s ease-out 300ms both; }
+
+/* Theme toggle 3D perspective */
+.theme-toggle-icon {
+  perspective: 200px;
+}
+
 /* ==============================
    REDUCED MOTION
    ============================== */

@@ -87,7 +87,7 @@ export default function MarkAttendanceModal({
               Select an employee and mark their attendance for a specific date.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 mt-4">
+          <div className="space-y-4 mt-4 modal-stagger">
             {error && (
               <div className="p-3 bg-red-500/10 border border-red-500/50 rounded-lg text-red-500 dark:text-red-400 text-sm animate-fade-in">
                 {error}
@@ -114,6 +114,7 @@ export default function MarkAttendanceModal({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                className="input-focus-glow"
               />
             </div>
             <div>
@@ -136,7 +137,7 @@ export default function MarkAttendanceModal({
               </Button>
             </DialogClose>
             <Button
-              className="w-full mt-2"
+              className="w-full mt-2 btn-shimmer"
               onClick={handleSave}
               type="button"
               disabled={saving}
